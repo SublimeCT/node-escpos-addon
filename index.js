@@ -31,5 +31,30 @@ const win32Escpos = function () {
    throw new Error("must be win32 platform to use");
 }
 
+/**
+ * module namespace cache
+ */
+let moduleNameSpace;
 
-module.exports = win32Escpos();
+/**
+ * allow reload module(breaking changes)
+ * 
+ * @example in upstream module:
+ * ```javascript
+ * import escpos from 'node-escpos-addon'
+ * // you can use `escpos.GetUsbDeviceList` ...
+ * ```
+ * 
+ * @example in this module:
+ * ```javascript
+ * import getEscpos from 'node-escpos-addon'
+ * const escpos = getEscpos(true)
+ * // you can use `escpos.GetUsbDeviceList` ...
+ * ```
+ * @param {boolean} reload reload this native module
+ */
+module.exports = function (reload = false) {
+  return reload || !moduleNameSpace
+    ? (moduleNameSpace = win32Escpos())
+    : moduleNameSpace
+}
